@@ -9,7 +9,7 @@ setup(name='renderconftree',
     license="MIT License",
     platforms=["any"],
     packages=find_packages(),
-    install_requires=['pyparsing', 'pyyaml','fspathtree>=0.3'],
+    install_requires=['pyyaml','fspathtree>=0.3'],
     entry_points='''
       [console_scripts]
       render-config-file=renderconftree.scripts.render_config_file:main

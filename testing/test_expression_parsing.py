@@ -7,6 +7,58 @@ from utils import *
 
 # import pudb; pu.db
 
+def test_variable_parser():
+
+  text = ">>${var1}||${var2<<${var3}"
+  results = parsers.variables.parse_string(text)
+  result = next(results)
+  assert result[0] == "var1"
+  assert result[1] == 2
+  assert result[2] == 9
+  result = next(results)
+  assert result[0] == "var3"
+  assert result[1] == 19
+  assert result[2] == 26
+
+
+  text = ">>${  ${var1} } }==${var2} <<"
+  results = parsers.variables.parse_string(text)
+  result = next(results)
+  assert result[0] == "var1"
+  assert result[1] == 6
+  assert result[2] == 13
+
+  result = next(results)
+  assert result[0] == "var2"
+  assert result[1] == 19
+  assert result[2] == 26
+
+
+def test_expression_parser():
+  text = ">>$( 1 + ${var1} )<<$(exp() + 1)"
+  results = parsers.expressions.parse_string(text)
+  result = next(results)
+  assert result[0] == "1 + ${var1}"
+  assert result[1] == 2
+  assert result[2] == 18
+
+  result = next(results)
+  assert result[0] == "exp() + 1"
+  assert result[1] == 20
+  assert result[2] == 32
+
+  text = ">>$(1 + $( 2 + $( exp() + ${var1} ) ) )<<"
+  results = parsers.expressions.parse_string(text)
+  result = next(results)
+  assert result[0] == "1 + $( 2 + $( exp() + ${var1} ) )"
+  assert result[1] == 2
+  assert result[2] == 39
+
+  
+  with pytest.raises(StopIteration):
+    result = next(results)
+
+
 def test_variable_expansion():
 
   context = {'var1': "inserted", 'var3' : "==$(x/y)==", 'l2' : {'var1':1} }

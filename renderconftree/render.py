@@ -11,27 +11,73 @@ import logging
 
 from .exceptions import *
 
-from pyparsing import *
-
 class parsers:
-  variable   = Literal('${') + SkipTo(Literal('}'), failOn=Literal('}'))("variable_name") + Literal('}')
-  expression = originalTextFor(nestedExpr(opener='$(',closer=')',ignoreExpr=QuotedString(quoteChar='(',endQuoteChar=')',escChar='\\',unquoteResults=False)))("expression_text")
+  class variables:
+    @staticmethod
+    def parse_string(text):
+      start_tok = "${"
+      end_tok = "}"
+      si = text.find(start_tok)
+      while si >= 0:
+        ei = text.find(end_tok,si)
+        sii = text.find(start_tok,si+1)
+        if sii >= 0 and sii < ei:
+          # we found another start token before the end
+          si = sii
+          continue
+
+        if ei < 0:
+          # no end token found
+          break
+
+        name = text[si+2:ei].strip()
+        yield name,si,ei+1
+        si = text.find(start_tok,ei)
+
+  class expressions:
+    @staticmethod
+    def parse_string(text):
+      start_tok = "$("
+      end_tok = ")"
+      si = text.find(start_tok)
+      N = len(text)
+      while si >= 0:
+        level = 1
+        i = si+len(start_tok)-1
+        while i < N and level > 0:
+          i += 1
+          if text[i] == start_tok[-1]:
+            level += 1
+            continue
+          if text[i] == end_tok[0]:
+            level -= 1
+            continue
+        ei = i
+          
+        if level > 0:
+          break
+
+        expression = text[si+2:ei].strip()
+        yield expression,si,ei+1
+        si = text.find(start_tok,ei)
+
+
 
 
 def variable_expansion(text,context,default=None,do_not_expand_if_value_contains_expression=False):
   expanded_text = ""
   ei = 0
   logger = logging.getLogger('renderconftree')
-  for result in parsers.variable.scanString( text ):
+  for result in parsers.variables.parse_string( text ):
     expanded_text += text[ei:result[1]]
-    name = result[0]['variable_name']
+    name = result[0]
     if name in context:
       value = context[name]
       if value is text:
         raise CircularDependency(f"Circular dependency detected. String '{text}' refers to itself.")
 
       if do_not_expand_if_value_contains_expression:
-        if next(parsers.expression.scanString(value),None) is None:
+        if next(parsers.expressions.parse_string(value),None) is None:
           expanded_text += value
         else:
           expanded_text += text[result[1]:result[2]]
@@ -146,9 +192,9 @@ def expression_substitution(text,context,*,allowed_names=allowed_expression_name
   expanded_text = ""
   ei = 0
   logger = logging.getLogger('renderconftree')
-  for result in parsers.expression.scanString( text ):
+  for result in parsers.expressions.parse_string( text ):
     expanded_text += text[ei:result[1]]
-    expression = result[0]['expression_text'][2:-1].strip() # strip off any white space
+    expression = result[0]
     # expand any nested expressions first.
     expression = expression_substitution(expression,context,allowed_names=allowed_names,paranoid=paranoid,expand_variables=expand_variables)
     try:
@@ -238,8 +284,8 @@ def render_tree( tree, *, modify_in_place=False,allowed_names=allowed_expression
   if strict: # check for un-evaluated expressions or variables
     unparsed_exps_and_vars = []
     for k,v in rendered_tree.get_all_leaf_node_paths(predicate = lambda k,v: type(v) in (str,bytes), transform = lambda k,v : (k,v) ):
-      unparsed_exps_and_vars += originalTextFor(parsers.expression).searchString(v).asList()
-      unparsed_exps_and_vars += originalTextFor(parsers.variable).searchString(v).asList()
+      unparsed_exps_and_vars += [ r[0] for r in parsers.expressions.parse_string(v) ]
+      unparsed_exps_and_vars += [ r[0] for r in parsers.variables.parse_string(v) ]
     if len(unparsed_exps_and_vars) > 0:
       raise UnparsedExpressions("Failed to replace one or more expressions or variables: "+str(unparsed_exps_and_vars))
 

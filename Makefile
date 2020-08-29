@@ -1,6 +1,6 @@
 test-install:
 	virtualenv _test-install-virtualenv
-	. _test-install-virtualenv/bin/activate && pip install .
+	. _test-install-virtualenv/bin/activate && pip install -e .
 
 devel-install:
 	virtualenv _devel-install-virtualenv
