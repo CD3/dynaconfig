@@ -1,6 +1,8 @@
 test-install:
 	virtualenv _test-install-virtualenv
-	. _test-install-virtualenv/bin/activate && pip install -e .
+	. _test-install-virtualenv/bin/activate && pip install .
+	. _test-install-virtualenv/bin/activate && pip install pytest
+	. _test-install-virtualenv/bin/activate && cd testing && time python -m pytest -s $(OPTS)
 
 devel-install:
 	virtualenv _devel-install-virtualenv
@@ -13,12 +15,12 @@ upload-package:
 	pipenv run python -m twine upload dist/*
 
 run-unit_tests:
-	. _test-install-virtualenv/bin/activate && pip install pytest
-	. _test-install-virtualenv/bin/activate && cd testing && time python -m pytest -s $(OPTS)
+	. _devel-install-virtualenv/bin/activate && pip install pytest
+	. _devel-install-virtualenv/bin/activate && cd testing && time python -m pytest -s $(OPTS)
 
 run-cli_tests:
-	. _test-install-virtualenv/bin/activate && pip install cram
-	. _test-install-virtualenv/bin/activate && cd testing && time cram *.t
+	. _devel-install-virtualenv/bin/activate && pip install cram
+	. _devel-install-virtualenv/bin/activate && cd testing && time cram *.t
 
 run-tests:
 	make test-install
