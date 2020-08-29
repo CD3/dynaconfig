@@ -17,6 +17,16 @@ be automatically calculated from one or more other parameters). It has the follo
     If you have a function that can take a string containing the text of your configuration file and return
     a configuration tree (nested dict/list) then you can use `renderconftree`.
 
+## Installation
+
+`renderconftree` is available on PyPi
+
+```
+pip install renderconftree
+```
+
+
+
 ## Examples
 YAML is a great language for writing configuration files. It is simple to write, configuration options
 can be stored in a logical hierarchy, and it is easy to get into your Python code. `renderconftree` simply
@@ -147,13 +157,3 @@ named `render-config-file` is provided that can read a configuration file,
 render the configuration tree, and write it back out. A variety of formats are supported, and
 the output format can be different than the input format, so you can even use this script
 to translate configuration file formats.
-
-## Installation
-
-`renderconftree` is available on PyPi
-
-```
-pip install renderconftree
-```
-
-
