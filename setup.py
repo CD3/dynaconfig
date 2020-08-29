@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='renderconftree',
-    version='0.0',
+    version = '0.1',
     description="Config tree readerer.",
     long_description="Write configurations files with values that contain python expressions that can refer to other configuration parameters.",
     author='C.D. Clark III',
