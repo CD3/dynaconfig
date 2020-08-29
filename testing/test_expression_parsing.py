@@ -5,6 +5,12 @@ from renderconftree.render import *
 from fspathtree import fspathtree
 from utils import *
 
+import logging
+# logger = logging.getLogger('renderconftree')
+# logger.setLevel(logging.DEBUG)
+# ch = logging.StreamHandler()
+# logger.addHandler(ch)
+
 # import pudb; pu.db
 
 def test_variable_parser():
@@ -58,6 +64,13 @@ def test_expression_parser():
   with pytest.raises(StopIteration):
     result = next(results)
 
+  text = ">>$(1 + 1 |> str )<<"
+  results = parsers.expressions.parse_string(text)
+  result = next(results)
+  assert result[0] == "1 + 1"
+  assert result[1] == 2
+  assert result[2] == 18
+  assert "str" in result[3]
 
 def test_variable_expansion():
 
@@ -111,6 +124,15 @@ def test_nested_expression_substitution():
   assert expression_substitution("$($($($(1 + 1) + 1) + 1) + 1)",context) == 5
 
 
+def test_expression_with_filters_substitution():
+  text = "$(10 |> str)"
+  assert expression_substitution(text,{}) == "10"
+  text = "$('10 ' |> int)"
+  assert expression_substitution(text,{}) == 10
+
+  with pytest.raises(UnknownFilter):
+    text = "$('10 ' |> unknown)"
+    expression_substitution(text,{})
 
 
 

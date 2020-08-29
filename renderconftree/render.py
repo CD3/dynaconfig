@@ -6,6 +6,7 @@ import copy
 import math
 
 from .utils import *
+from . import filters
 
 import logging
 
@@ -57,8 +58,11 @@ class parsers:
         if level > 0:
           break
 
-        expression = text[si+2:ei].strip()
-        yield expression,si,ei+1
+        toks = text[si+2:ei].strip().split("|>")
+        expression = toks[0].strip()
+        filters = [ t.strip() for t in (toks[1:] if len(toks) > 1 else []) ]
+        
+        yield expression,si,ei+1,filters
         si = text.find(start_tok,ei)
 
 
@@ -202,12 +206,28 @@ def expression_substitution(text,context,*,allowed_names=allowed_expression_name
         expression = variable_expansion(expression,context)
       allowed_names['context'] = context
       r = eval_expression(expression,allowed_names)
+      for filter in result[3]:
+        toks = filter.strip().split()
+        func = toks[0]
+        args = toks[1:] if len(toks) > 1 else None
+        if not hasattr(filters,f"filter_{toks[0]}"):
+          raise UnknownFilter(f"Could not find filter named '{func}'")
+        else:
+          func = getattr(filters,f"filter_{toks[0]}")
+        if args is None:
+          r = func(r)
+        else:
+          r = func(r,*args)
+
       if result[1] == 0 and result[2] == len(text):
         # the entire string is an expression,
         # we can just return the result
         return r
       else:
         expanded_text += str(r)
+    except UnknownFilter as e:
+      logger.debug(f"Parser found uknown filter name {str(e)}")
+      raise e
     except Exception as e:
       logger.debug(f"Exception thrown during expression evaluation: {expression} -> {str(e)}")
       expanded_text += text[result[1]:result[2]]
