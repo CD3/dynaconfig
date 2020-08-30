@@ -37,6 +37,7 @@ def readConfig( text = None, parser = yaml.safe_load
                            , render = True
                            , ignore_unparsed_expressions = False
                            , return_fspathtree = False
+                           , filters = {}
                            , filename = None
                            , debug = False):
   '''
@@ -62,7 +63,7 @@ def readConfig( text = None, parser = yaml.safe_load
 
   # if render is set, we want to render the data tree
   if render:
-    data = render_tree( data, strict=not ignore_unparsed_expressions )
+    data = render_tree( data, strict=not ignore_unparsed_expressions, filters=filters )
 
   if return_fspathtree:
     return data

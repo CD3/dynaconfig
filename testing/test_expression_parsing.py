@@ -130,6 +130,9 @@ def test_expression_with_filters_substitution():
   text = "$('10 ' |> int)"
   assert expression_substitution(text,{}) == 10
 
+  text = "$(10 |> str)"
+  assert expression_substitution(text,{},filters={'str':int}) == 10
+
   with pytest.raises(UnknownFilter):
     text = "$('10 ' |> unknown)"
     expression_substitution(text,{})

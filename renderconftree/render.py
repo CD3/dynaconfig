@@ -6,7 +6,7 @@ import copy
 import math
 
 from .utils import *
-from . import filters
+from . import filters as our_filters
 
 import logging
 
@@ -190,7 +190,7 @@ def eval_expression(text,allowed_names={}):
       raise NameError(f"Use of name '{name}' not allowed in expressions.")
   return eval(code, {'__buildins__':{}}, allowed_names )
 
-def expression_substitution(text,context,*,allowed_names=allowed_expression_names,paranoid=False,expand_variables=False):
+def expression_substitution(text,context,*,filters={},allowed_names=allowed_expression_names,paranoid=False,expand_variables=False):
   if paranoid:
     allowed_names = {}
   expanded_text = ""
@@ -210,10 +210,13 @@ def expression_substitution(text,context,*,allowed_names=allowed_expression_name
         toks = filter.strip().split()
         func = toks[0]
         args = toks[1:] if len(toks) > 1 else None
-        if not hasattr(filters,f"filter_{toks[0]}"):
-          raise UnknownFilter(f"Could not find filter named '{func}'")
+        if toks[0] in filters:
+          func = filters[toks[0]]
+        elif hasattr(our_filters,f"filter_{toks[0]}"):
+          func = getattr(our_filters,f"filter_{toks[0]}")
         else:
-          func = getattr(filters,f"filter_{toks[0]}")
+          raise UnknownFilter(f"Could not find filter named '{func}'")
+
         if args is None:
           r = func(r)
         else:
@@ -237,7 +240,7 @@ def expression_substitution(text,context,*,allowed_names=allowed_expression_name
 
   return expanded_text
 
-def render_tree( tree, *, modify_in_place=False,allowed_names=allowed_expression_names, strict = False, history = None ):
+def render_tree( tree, *, filters = {}, modify_in_place=False, allowed_names=allowed_expression_names, strict = False, history = None ):
   '''
   Given a tree data structure (nested dict/list), this function will loop through all all leaf nodes containing expressions
   and replace their value with the result of the expression. Expressions are specified using the bash/zsh command substitution
@@ -256,6 +259,7 @@ def render_tree( tree, *, modify_in_place=False,allowed_names=allowed_expression
   tree -- The nested tree data structure to render.
 
   keyword-only arguments:
+  filters -- A dict containing functions to be applied as filters to rendered items.
   modify_in_place -- If True, the tree will be rendered in place. If False, a copy of the tree will be made first.
   allowed_names -- The scope that will be passed as the to the eval(...)
                    function's local scope. The global scope will be empty, so any variables,
