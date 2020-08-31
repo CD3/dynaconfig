@@ -190,7 +190,7 @@ def eval_expression(text,allowed_names={}):
       raise NameError(f"Use of name '{name}' not allowed in expressions.")
   return eval(code, {'__buildins__':{}}, allowed_names )
 
-def expression_substitution(text,context,*,filters={},allowed_names=allowed_expression_names,paranoid=False,expand_variables=False):
+def expression_substitution(text,context={},*,filters={},allowed_names=allowed_expression_names,paranoid=False,expand_variables=False):
   if paranoid:
     allowed_names = {}
   expanded_text = ""
@@ -217,10 +217,13 @@ def expression_substitution(text,context,*,filters={},allowed_names=allowed_expr
         else:
           raise UnknownFilter(f"Could not find filter named '{func}'")
 
-        if args is None:
-          r = func(r)
-        else:
-          r = func(r,*args)
+        try:
+          if args is None:
+            r = func(r)
+          else:
+            r = func(r,*args)
+        except Exception as e:
+          raise FilterError(e)
 
       if result[1] == 0 and result[2] == len(text):
         # the entire string is an expression,
@@ -229,7 +232,10 @@ def expression_substitution(text,context,*,filters={},allowed_names=allowed_expr
       else:
         expanded_text += str(r)
     except UnknownFilter as e:
-      logger.debug(f"Parser found uknown filter name {str(e)}")
+      logger.debug(f"Parser found uknown filter name: {str(e)}")
+      raise e
+    except FilterError as e:
+      logger.debug(f"There was an error applying on of the filters: {str(e)}")
       raise e
     except Exception as e:
       logger.debug(f"Exception thrown during expression evaluation: {expression} -> {str(e)}")

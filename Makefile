@@ -15,7 +15,7 @@ upload-package:
 	pipenv run python -m twine upload dist/*
 
 run-unit_tests:
-	. _devel-install-virtualenv/bin/activate && pip install pytest
+	. _devel-install-virtualenv/bin/activate && pip install pytest pudb pint
 	. _devel-install-virtualenv/bin/activate && cd testing && time python -m pytest -s $(OPTS)
 
 run-cli_tests:

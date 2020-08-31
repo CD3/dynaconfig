@@ -6,3 +6,6 @@ class UnparsedExpressions(Exception):
 
 class UnknownFilter(Exception):
   pass
+
+class FilterError(Exception):
+  pass
