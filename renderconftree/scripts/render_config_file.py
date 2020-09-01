@@ -119,7 +119,7 @@ def main():
     print(e)
     sys.exit(1)
   except Exception as e:
-    print("There was an error rendeing the configuration file")
+    print("There was an error rendering the configuration file")
     print(e)
     sys.exit(2)
 
