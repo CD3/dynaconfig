@@ -4,7 +4,7 @@ from .file_parsers import *
 import re
 
 
-funcRegex = re.compile('^\s*([^\s\(]+)\(([^\)]*)\)\s*')
+funcRegex = re.compile(r'^\s*([^\s\(]+)\(([^\)]*)\)\s*')
 
 def include_func(fn, context):
   with open(fn) as f:

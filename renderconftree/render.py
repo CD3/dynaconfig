@@ -6,6 +6,7 @@ import copy
 import math
 
 from .utils import *
+from .units import *
 from . import filters as our_filters
 
 import logging
@@ -160,6 +161,8 @@ allowed_expression_names = {
 # here so that the user can call functions with
 # math. or m. prefixed if they like.
     'float' : float,
+    'Q_' : Q_,
+    'quant' : quant,
     'int' : int,
     'abs' : abs,
     'sum' : sum,

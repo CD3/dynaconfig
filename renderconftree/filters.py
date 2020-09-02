@@ -5,13 +5,9 @@ def filter_int(x):
   x = filter_mag(x)
   return int(x)
 
-filter_i = filter_int
-
 def filter_float(x):
   x = filter_mag(x)
   return float(x)
-
-filter_f = filter_float
 
 def filter_str(x):
   return str(x)
@@ -27,7 +23,6 @@ def filter_mod(x,d):
 def filter_quant(q):
   if isinstance(q,str):
     q = Q_(q)
-
   return q
 
 def filter_to(q,u):
