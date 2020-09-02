@@ -14,7 +14,6 @@ import logging
 # import pudb; pu.db
 
 def test_variable_parser():
-
   text = ">>${var1}||${var2<<${var3}"
   results = parsers.variables.parse_string(text)
   result = next(results)
@@ -72,8 +71,34 @@ def test_expression_parser():
   assert result[2] == 18
   assert "str" in result[3]
 
-def test_variable_expansion():
+def test_quoted_string_parser():
 
+  results = parsers.quoted_strings.parse_string('''"this is a quote"''')
+  result = next(results)
+  assert result[0] == "this is a quote"
+  assert result[1] == 0
+  assert result[2] == 17
+  with pytest.raises(StopIteration):
+    result = next(results)
+
+
+
+  results = parsers.quoted_strings.parse_string('''"this is a quote" and 'this is another' ''')
+  result = next(results)
+  assert result[0] == "this is a quote"
+  assert result[1] == 0
+  assert result[2] == 17
+  result = next(results)
+  assert result[0] == "this is another"
+  assert result[1] == 22
+  assert result[2] == 39
+  with pytest.raises(StopIteration):
+    result = next(results)
+
+
+
+
+def test_variable_expansion():
   context = {'var1': "inserted", 'var3' : "==$(x/y)==", 'l2' : {'var1':1} }
   assert variable_expansion(">>${var2}<<",context) == ">>${var2}<<"
   assert variable_expansion(">>${var1}<<",context) == ">>inserted<<"
@@ -90,6 +115,10 @@ def test_variable_expansion():
 
   assert variable_expansion(">>${var1} and ${../var1}<<",fspathtree(context)['l2']) == ">>1 and inserted<<"
 
+def test_variable_with_subtrees():
+  context = {'var1': "inserted", 'var3' : "==$(x/y)==", 'l2' : {'var1':1} }
+  assert 'var1' in variable_expansion("${l2}",context)
+  assert variable_expansion("${l2}",context)['var1'] == 1
 
 
 def test_expression_substitution():
@@ -124,6 +153,38 @@ def test_nested_expression_substitution():
   assert expression_substitution("$($($($(1 + 1) + 1) + 1) + 1)",context) == 5
 
 
+def test_filter_string_parsing():
+
+  filter = parsers.filter_strings.parse_string("filter a b c d")
+  assert len(filter) == 5
+  assert filter[0] == 'filter'
+  assert filter[1] == 'a'
+  assert filter[2] == 'b'
+  assert filter[3] == 'c'
+  assert filter[4] == 'd'
+
+  filter = parsers.filter_strings.parse_string("filter 'a b' c d")
+  assert len(filter) == 4
+  assert filter[0] == 'filter'
+  assert filter[1] == 'a b'
+  assert filter[2] == 'c'
+  assert filter[3] == 'd'
+
+  filter = parsers.filter_strings.parse_string("filter 'a b'c d")
+  assert len(filter) == 4
+  assert filter[0] == 'filter'
+  assert filter[1] == 'a b'
+  assert filter[2] == 'c'
+  assert filter[3] == 'd'
+
+  filter = parsers.filter_strings.parse_string("   filter 'a b'    c d    ")
+  assert len(filter) == 4
+  assert filter[0] == 'filter'
+  assert filter[1] == 'a b'
+  assert filter[2] == 'c'
+  assert filter[3] == 'd'
+
+
 def test_expression_with_filters_substitution():
   text = "$(10 |> str)"
   assert expression_substitution(text,{}) == "10"
@@ -137,6 +198,12 @@ def test_expression_with_filters_substitution():
     text = "$('10 ' |> unknown)"
     expression_substitution(text,{})
 
+
+  text = '''$(10 |> myfilt 'a b' c d)'''
+  assert expression_substitution(text,{},filters={'myfilt':lambda n,a1,a2,a3 : a1}) == 'a b'
+
+  text = '''$(10 |> myfilt a 'b c' d)'''
+  assert expression_substitution(text,{},filters={'myfilt':lambda n,a1,a2,a3 : a1}) == 'a'
 
 
 

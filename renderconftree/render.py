@@ -35,6 +35,53 @@ class parsers:
         yield name,si,ei+1
         si = text.find(start_tok,ei)
 
+  class quoted_strings:
+    @staticmethod
+    def parse_string(text):
+      quote_chars = ["'",'"']
+      escape_char = r"\\"
+      current_char = None
+
+      si = None
+      ei = None
+      for i in range(len(text)):
+        if text[i] == current_char and text[i-1] != escape_char:
+          current_char = None
+          ei = i+1
+          yield text[si+1:ei-1],si,ei
+          continue
+
+        if text[i] in quote_chars:
+          current_char = text[i]
+          si = i
+          continue
+
+  class filter_strings:
+    @staticmethod
+    def parse_string(text):
+
+      parts = []
+      i = 0
+      for results in parsers.quoted_strings.parse_string(text):
+        parts.append( (True,text[i:results[1]]) )
+        parts.append( (False,results[0]) )
+        i = results[2]
+      parts.append( (True,text[i:]) )
+
+      toks = []
+      for part in parts:
+        if part[0]:
+          toks += part[1].strip().split()
+        else:
+          toks.append(part[1])
+
+       
+
+
+      return toks
+
+
+
   class expressions:
     @staticmethod
     def parse_string(text):
@@ -64,7 +111,6 @@ class parsers:
         
         yield expression,si,ei+1,filters
         si = text.find(start_tok,ei)
-
 
 
 
@@ -205,9 +251,10 @@ def expression_substitution(text,context={},*,filters={},allowed_names=allowed_e
       if expand_variables:
         expression = variable_expansion(expression,context)
       allowed_names['context'] = context
+      allowed_names['c'] = context
       r = eval_expression(expression,allowed_names)
       for filter in result[3]:
-        toks = filter.strip().split()
+        toks = parsers.filter_strings.parse_string(filter)
         func = toks[0]
         args = toks[1:] if len(toks) > 1 else None
         if toks[0] in filters:

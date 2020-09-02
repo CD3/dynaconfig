@@ -18,8 +18,12 @@ def test_expression_substitution_with_quantity_filter():
 
   text = "$('10 cm' |> quant)"
   val = expression_substitution(text)
-  val.magnitude == 10
-  val.to("m").magnitude == Approx(0.1)
+  assert val.magnitude == 10
+  assert val.to("m").magnitude == Approx(0.1)
+
+  text = "$('10 J/s' |> quant |> to 'mJ / s' |> mag )"
+  val = expression_substitution(text)
+  assert val== Approx(10000)
   
 
 def test_adding_unit_support_example():

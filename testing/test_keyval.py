@@ -6,6 +6,13 @@ from utils import Approx
 from renderconftree.read import *
 from renderconftree.file_parsers import *
 
+import logging
+logger = logging.getLogger('renderconftree')
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+logger.addHandler(ch)
+
+
 def test_simple():
 
   data = '''
@@ -50,5 +57,23 @@ def test_simple():
   assert data['nest1']['nest2']['var3'] == 111
   assert data['nest1']['nest2']['var4'] == 1
   assert data['nest1']['nest2']['var5'] == 11
+
+
+# import pudb; pu.db
+
+def test_property_tree_style_keys():
+  text = '''
+emitters.0.irradiance=$("2 W/cm/cm" |> quant)
+emitters.0.beam.profile.diameter=$("5 mm" |> quant)
+emitters.0.power=$( context['emitters.0.irradiance']*(m.pi/4)*context['emitters.0.beam.profile.diameter']**2 |> to W |> mag)
+  '''
+
+  data = readConfig( text, parser=lambda x : keyval.load(x) )
+
+  assert data['emitters.0.irradiance'].magnitude == 2
+  assert data['emitters.0.beam.profile.diameter'].magnitude == 5
+  assert data['emitters.0.power'] == Approx(2*3.14159*0.5*0.5/4)
+
+
 
 

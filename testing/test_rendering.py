@@ -61,3 +61,16 @@ def test_basic_rendering():
   assert tree['/simulations/1/dy'] == Approx(0.01)
 
 
+def test_property_tree_style_keys():
+  d = { 'l11.l12.var1' : 1,
+      'l11.l12.var2' : 2,
+      'l11.l12.var3' : '${l11.l12.var2}',
+      'l11.l12.var4' : '$( ${l11.l12.var2}*2)'}
+
+  t = render_tree(d)
+
+  assert t['l11.l12.var1'] == 1
+  assert t['l11.l12.var2'] == 2
+  assert t['l11.l12.var3'] == 2
+  assert t['l11.l12.var4'] == 4
+
