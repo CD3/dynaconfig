@@ -1,2 +1,0 @@
-pyyaml
-fspathtree>=0.3

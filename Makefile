@@ -6,7 +6,7 @@ _%:
 	. $@/bin/activate && pip install -e .
 
 clean:
-	rm _* dist -r
+	rm -rf _* dist ./dynaconfig.egg-info
 	
 
 run-unit_tests: _devel-install-virtualenv
