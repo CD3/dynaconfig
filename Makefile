@@ -6,7 +6,7 @@ _%:
 	. $@/bin/activate && pip install -e .
 
 clean:
-	rm _* -r
+	rm _* dist -r
 	
 
 run-unit_tests: _devel-install-virtualenv
