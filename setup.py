@@ -1,18 +1,18 @@
 from setuptools import setup, find_packages
 
-setup(name='renderconftree',
+setup(name='dynaconfig',
     version = '0.3',
-    description="Config tree readerer.",
-    long_description="Write configurations files with values that contain python expressions that can refer to other configuration parameters.",
+    description="Dynamic config tree readerer.",
+    long_description="Write dynamic configurations files with values that contain python expressions and can reference other configuration parameters.",
     author='C.D. Clark III',
-    url='https://github.com/CD3/renderconfigtree',
+    url='https://github.com/CD3/dynaconfig',
     license="MIT License",
     platforms=["any"],
     packages=find_packages(),
     install_requires=['pyyaml','fspathtree>=0.3'],
     entry_points='''
       [console_scripts]
-      render-config-file=renderconftree.scripts.render_config_file:main
+      render-config-file=dynaconfig.scripts.render_config_file:main
     ''',
     classifiers=[
       "Programming Language :: Python :: 3",

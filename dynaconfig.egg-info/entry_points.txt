@@ -1,0 +1,4 @@
+
+      [console_scripts]
+      render-config-file=dynaconfig.scripts.render_config_file:main
+    

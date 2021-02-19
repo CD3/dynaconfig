@@ -118,7 +118,7 @@ class parsers:
 def variable_expansion(text,context,default=None,do_not_expand_if_value_contains_expression=False):
   expanded_text = ""
   ei = 0
-  logger = logging.getLogger('renderconftree')
+  logger = logging.getLogger('dynaconfig')
   for result in parsers.variables.parse_string( text ):
     expanded_text += text[ei:result[1]]
     name = result[0]
@@ -244,7 +244,7 @@ def expression_substitution(text,context={},*,filters={},allowed_names=allowed_e
     allowed_names = {}
   expanded_text = ""
   ei = 0
-  logger = logging.getLogger('renderconftree')
+  logger = logging.getLogger('dynaconfig')
   for result in parsers.expressions.parse_string( text ):
     expanded_text += text[ei:result[1]]
     expression = result[0]

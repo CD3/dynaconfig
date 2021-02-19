@@ -2,8 +2,8 @@ import sys, os, timeit
 
 import pytest
 
-from renderconftree.read import *
-from renderconftree.render import *
+from dynaconfig.read import *
+from dynaconfig.render import *
 
 import utils
 

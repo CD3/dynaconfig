@@ -4,7 +4,7 @@ import sys, os, timeit, pprint
 
 import pytest
 
-from renderconftree.read import *
+from dynaconfig.read import *
 
 from utils import *
 

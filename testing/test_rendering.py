@@ -1,7 +1,7 @@
 import sys, os
 import pytest
 
-from renderconftree.render import *
+from dynaconfig.render import *
 import yaml
 
 from utils import *

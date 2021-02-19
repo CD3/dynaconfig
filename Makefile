@@ -5,6 +5,8 @@ _%:
 	virtualenv $@
 	. $@/bin/activate && pip install -e .
 
+clean:
+	rm _* -r
 	
 
 run-unit_tests: _devel-install-virtualenv
@@ -13,7 +15,7 @@ run-unit_tests: _devel-install-virtualenv
 
 run-cli_tests: _devel-install-virtualenv
 	. $</bin/activate && pip install cram
-	. $</bin/activate && cd testing && testtime cram *.t
+	. $</bin/activate && cd testing && time cram *.t
 
 run-tests:
 	make test-install

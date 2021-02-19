@@ -1,12 +1,12 @@
 import sys, os
 import pytest
 
-from renderconftree.render import *
+from dynaconfig.render import *
 from fspathtree import fspathtree
 from utils import *
 
 import logging
-# logger = logging.getLogger('renderconftree')
+# logger = logging.getLogger('dynaconfig')
 # logger.setLevel(logging.DEBUG)
 # ch = logging.StreamHandler()
 # logger.addHandler(ch)

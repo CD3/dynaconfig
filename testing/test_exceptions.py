@@ -5,8 +5,8 @@ import pytest
 from utils import *
 
 
-from renderconftree.render import *
-from renderconftree.exceptions import *
+from dynaconfig.render import *
+from dynaconfig.exceptions import *
 
 def test_simple():
   logging.info("exceptions")

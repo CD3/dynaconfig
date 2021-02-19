@@ -6,8 +6,8 @@ import pytest
 from utils import *
 
 
-from renderconftree.render import *
-from renderconftree.utils import *
+from dynaconfig.render import *
+from dynaconfig.utils import *
 
 
 @pytest.mark.skip(reason="filters have not been implemented in the rewrite yet..")

@@ -5,7 +5,7 @@ import sys, os
 import pytest
 from utils import *
 
-from renderconftree.render import *
+from dynaconfig.render import *
 
 def test_requirements_simple():
   logging.info("multi-pass")

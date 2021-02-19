@@ -3,11 +3,11 @@ import sys, os, timeit
 import pytest
 from utils import Approx
 
-from renderconftree.read import *
-from renderconftree.file_parsers import *
+from dynaconfig.read import *
+from dynaconfig.file_parsers import *
 
 import logging
-logger = logging.getLogger('renderconftree')
+logger = logging.getLogger('dynaconfig')
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 logger.addHandler(ch)

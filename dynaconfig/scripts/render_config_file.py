@@ -2,8 +2,8 @@
 
 import sys, os
 
-from renderconftree.read import *
-from renderconftree.exceptions import *
+from dynaconfig.read import *
+from dynaconfig.exceptions import *
 from argparse import ArgumentParser
 import logging
 
@@ -59,7 +59,7 @@ def main():
 
   args = parser.parse_args()
 
-  logger = logging.getLogger('renderconftree')
+  logger = logging.getLogger('dynaconfig')
   if args.debug:
     logger.setLevel(logging.DEBUG)
   else:

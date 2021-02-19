@@ -3,7 +3,7 @@
 import sys, os, json
 import pytest
 
-from renderconftree.read import *
+from dynaconfig.read import *
 
 import utils
 

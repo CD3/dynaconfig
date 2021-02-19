@@ -2,7 +2,7 @@
 
 import sys, os, json
 
-from renderconftree.read import *
+from dynaconfig.read import *
 
 from utils import Approx
 

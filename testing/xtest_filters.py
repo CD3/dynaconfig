@@ -4,8 +4,8 @@ import sys, os
 
 import pytest
 
-from renderconftree.read import *
-from renderconftree.filters import *
+from dynaconfig.read import *
+from dynaconfig.filters import *
 
 import utils
 #logging.basicConfig( level=logging.DEBUG )

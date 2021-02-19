@@ -2,7 +2,7 @@ import sys, os
 
 import pytest
 
-from renderconftree.file_parsers import *
+from dynaconfig.file_parsers import *
 
 import utils
 
