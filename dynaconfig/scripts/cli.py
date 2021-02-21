@@ -29,6 +29,7 @@ def dynaconfig():
 
   parser.add_argument("infile",
                       action="store",
+                      nargs="?",
                       help="Config file to process." )
 
   parser.add_argument("-f", "--from",
@@ -69,6 +70,7 @@ def dynaconfig():
     print("  'json'   - The JSON file format parsed by Python's json module.")
     print("  'ini'    - The INI file format parsed by Python's configparser module.")
     print("  'keyval' - A simple key=value format. This format does not support nested config parameters.")
+    sys.exit()
 
   logger = logging.getLogger('dynaconfig')
   if args.debug:
