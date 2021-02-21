@@ -4,4 +4,4 @@ __pycache__
 .cache/
 build/
 dist/
-renderconftree.egg-info/
+dynaconfig.egg-info/

@@ -1,4 +1,4 @@
-test-install: _devel-install-virtualenv
+test-install: _test-install-virtualenv
 devel-install: _devel-install-virtualenv
 
 _%:

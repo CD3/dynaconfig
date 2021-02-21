@@ -24,7 +24,7 @@ def ft(fn):
     return "keyval"
 
 
-def main():
+def dynaconfig():
   parser = ArgumentParser(description="Render a set of config files.")
 
   parser.add_argument("infile",
@@ -43,6 +43,10 @@ def main():
                       default=None,
                       help="Output file format." )
 
+  parser.add_argument("-l", "--list",
+                      action="store_true",
+                      help="List available file formats." )
+
   parser.add_argument("-o", "--output",
                       action="store",
                       default="-",
@@ -58,6 +62,13 @@ def main():
 
 
   args = parser.parse_args()
+
+  if args.list:
+    print("Available file formats:")
+    print("  'yaml'   - The YAML file file format parsed by the pyyaml module.")
+    print("  'json'   - The JSON file format parsed by Python's json module.")
+    print("  'ini'    - The INI file format parsed by Python's configparser module.")
+    print("  'keyval' - A simple key=value format. This format does not support nested config parameters.")
 
   logger = logging.getLogger('dynaconfig')
   if args.debug:

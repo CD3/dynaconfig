@@ -12,7 +12,7 @@ setup(name='dynaconfig',
     install_requires=['pyyaml','fspathtree>=0.3'],
     entry_points='''
       [console_scripts]
-      render-config-file=dynaconfig.scripts.render_config_file:main
+      dynaconfig=dynaconfig.scripts.cli:dynaconfig
     ''',
     classifiers=[
       "Programming Language :: Python :: 3",
