@@ -120,6 +120,12 @@ def test_variable_with_subtrees():
   assert 'var1' in variable_expansion("${l2}",context)
   assert variable_expansion("${l2}",context)['var1'] == 1
 
+def test_variable_expansion_with_filters():
+
+  assert variable_expansion("${l2/var1}",fspathtree({'l2': {'var1':1}})) == 1
+  assert variable_expansion("${l2/var1}",fspathtree({'l2': {'var1':"1"}})) == "1"
+  assert variable_expansion("${l2/var1|>int}",fspathtree({'l2': {'var1':"1"}}),filters={'int':int}) == 1
+
 
 def test_expression_substitution():
 

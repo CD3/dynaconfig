@@ -32,8 +32,15 @@ class parsers:
           # no end token found
           break
 
-        name = text[si+2:ei].strip()
-        yield name,si,ei+1
+        # name = text[si+2:ei].strip()
+        # yield name,si,ei+1
+        # si = text.find(start_tok,ei)
+
+        toks = text[si+2:ei].strip().split("|>")
+        name = toks[0].strip()
+        filters = [ t.strip() for t in (toks[1:] if len(toks) > 1 else []) ]
+        
+        yield name,si,ei+1,filters
         si = text.find(start_tok,ei)
 
   class quoted_strings:
@@ -115,7 +122,7 @@ class parsers:
 
 
 
-def variable_expansion(text,context,default=None,do_not_expand_if_value_contains_expression=False):
+def variable_expansion(text,context,default=None,filters={},do_not_expand_if_value_contains_expression=False):
   '''
   Expand variable references in a text string.
   '''
@@ -127,6 +134,22 @@ def variable_expansion(text,context,default=None,do_not_expand_if_value_contains
     name = result[0]
     if name in context:
       value = context[name]
+
+      for f in result[3]:
+        if f in filters:
+          func = filters[f]
+        elif hasattr(our_filters,f"filter_{f}"):
+          func = getattr(our_filters,f"filter_{f}")
+        else:
+          raise UnknownFilter(f"Could not find filter named '{f}'")
+
+        try:
+          value = func(value)
+        except Exception as e:
+          raise FilterError(e)
+
+
+
       if value is text:
         raise CircularDependency(f"Circular dependency detected. String '{text}' refers to itself.")
 
@@ -258,7 +281,7 @@ def expression_substitution(text,context={},*,filters={},allowed_names=allowed_e
     expression = expression_substitution(expression,context,allowed_names=allowed_names,paranoid=paranoid,expand_variables=expand_variables)
     try:
       if expand_variables:
-        expression = variable_expansion(expression,context)
+        expression = variable_expansion(expression,context,filters=filters)
       allowed_names['context'] = context
       allowed_names['c'] = context
       r = eval_expression(expression,allowed_names)
@@ -357,7 +380,7 @@ def render_tree( tree, *, filters = {}, modify_in_place=False, allowed_names=all
     # loop through all leaf notes that have string values
     for k,v in rendered_tree.get_all_leaf_node_paths(predicate = lambda k,v: type(v) in (str,bytes), transform = lambda k,v : (k,v) ):
       try:
-        new_v = variable_expansion(v,rendered_tree[k.parent])
+        new_v = variable_expansion(v,rendered_tree[k.parent],filters=filters)
       except CircularDependency as e:
         raise CircularDependency(f"Circular dependency detected. Value '{v}' of key '{k}' refers to itself.")
 

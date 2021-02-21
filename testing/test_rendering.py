@@ -78,13 +78,15 @@ def test_property_tree_style_keys():
 def test_quantity_shortcut():
   d = fspathtree(
       {'grid' : { 'x' : { 'min': "0 cm", 'max': "10 cm", 'res': "1 um",
-        'N': "$((${/grid/x/max}-${/grid/x/min})/${/grid/x/res})"}
+        'N': "$((${/grid/x/max|>q}-${/grid/x/min|>q})/${/grid/x/res|>q})"}
         },
-        'max' : "${/grid/x/max}"
+        'max' : "${/grid/x/max|>q}"
       }
       )
 
   t = render_tree(d,filters={'q':filter_quant})
 
-  print(t['max'])
+  assert type(t['max']) == Q_
+  # assert t['grid/x/N'] == 10/0.0001
+
 
