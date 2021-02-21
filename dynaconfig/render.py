@@ -116,6 +116,9 @@ class parsers:
 
 
 def variable_expansion(text,context,default=None,do_not_expand_if_value_contains_expression=False):
+  '''
+  Expand variable references in a text string.
+  '''
   expanded_text = ""
   ei = 0
   logger = logging.getLogger('dynaconfig')
@@ -240,6 +243,9 @@ def eval_expression(text,allowed_names={}):
   return eval(code, {'__buildins__':{}}, allowed_names )
 
 def expression_substitution(text,context={},*,filters={},allowed_names=allowed_expression_names,paranoid=False,expand_variables=False):
+  '''
+  Evaluate and replace expressions in a text string.
+  '''
   if paranoid:
     allowed_names = {}
   expanded_text = ""
@@ -303,8 +309,8 @@ def render_tree( tree, *, filters = {}, modify_in_place=False, allowed_names=all
   syntax, $(...).
 
   Expressions may contain variable references. Variables references are specified using the bash/zsh variable expansion syntax,
-  ${varname}. Variable references may refer to other leaf nodes in the tree and and use a filesystem path style key. For example,
-  ${x} woudl refer to an item named 'x' in the on the same branch, but ${/x} would refer to an item named 'x' at the tree root.
+  ${varname}. Variable references may refer to other leaf nodes in the tree and use a filesystem path style key. For example,
+  ${x} would refer to an item named 'x' on the same branch, but ${/x} would refer to an item named 'x' at the tree root.
   Multiple levels can be given, and references to items "above" are also supported (i.e. ${/example/simulations/x} or ${../x}).
   Variable references will be replaced with value of the node they refer to.
 

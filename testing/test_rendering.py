@@ -2,6 +2,7 @@ import sys, os
 import pytest
 
 from dynaconfig.render import *
+from dynaconfig.filters import *
 import yaml
 
 from utils import *
@@ -73,4 +74,17 @@ def test_property_tree_style_keys():
   assert t['l11.l12.var2'] == 2
   assert t['l11.l12.var3'] == 2
   assert t['l11.l12.var4'] == 4
+
+def test_quantity_shortcut():
+  d = fspathtree(
+      {'grid' : { 'x' : { 'min': "0 cm", 'max': "10 cm", 'res': "1 um",
+        'N': "$((${/grid/x/max}-${/grid/x/min})/${/grid/x/res})"}
+        },
+        'max' : "${/grid/x/max}"
+      }
+      )
+
+  t = render_tree(d,filters={'q':filter_quant})
+
+  print(t['max'])
 
