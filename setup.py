@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(name='dynaconfig',
-    version = '0.3',
+    version = '0.4',
     description="Dynamic config tree readerer.",
     long_description="Write dynamic configurations files with values that contain python expressions and can reference other configuration parameters.",
     author='C.D. Clark III',
