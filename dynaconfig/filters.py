@@ -36,3 +36,9 @@ def filter_mag(q):
   except: pass
   return q
 
+def filter_int_from_str(s):
+  return f"int('{s}')"
+def filter_float_from_str(s):
+  return f"flaot('{s}')"
+def filter_quant_from_str(s):
+  return f"Q_('{s}')"

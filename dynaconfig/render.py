@@ -121,8 +121,14 @@ class parsers:
         si = text.find(start_tok,ei)
 
 
+variable_expansion_filters = {
+    'i' : our_filters.filter_int_from_str,
+    'd' : our_filters.filter_float_from_str,
+    'f' : our_filters.filter_float_from_str,
+    'q' : our_filters.filter_quant_from_str,
+}
 
-def variable_expansion(text,context,default=None,filters={},do_not_expand_if_value_contains_expression=False):
+def variable_expansion(text,context,default=None,filters=variable_expansion_filters,do_not_expand_if_value_contains_expression=False):
   '''
   Expand variable references in a text string.
   '''
@@ -281,7 +287,7 @@ def expression_substitution(text,context={},*,filters={},allowed_names=allowed_e
     expression = expression_substitution(expression,context,allowed_names=allowed_names,paranoid=paranoid,expand_variables=expand_variables)
     try:
       if expand_variables:
-        expression = variable_expansion(expression,context,filters=filters)
+        expression = variable_expansion(expression,context)
       allowed_names['context'] = context
       allowed_names['c'] = context
       r = eval_expression(expression,allowed_names)
@@ -380,7 +386,7 @@ def render_tree( tree, *, filters = {}, modify_in_place=False, allowed_names=all
     # loop through all leaf notes that have string values
     for k,v in rendered_tree.get_all_leaf_node_paths(predicate = lambda k,v: type(v) in (str,bytes), transform = lambda k,v : (k,v) ):
       try:
-        new_v = variable_expansion(v,rendered_tree[k.parent],filters=filters)
+        new_v = variable_expansion(v,rendered_tree[k.parent])
       except CircularDependency as e:
         raise CircularDependency(f"Circular dependency detected. Value '{v}' of key '{k}' refers to itself.")
 

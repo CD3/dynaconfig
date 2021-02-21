@@ -84,9 +84,10 @@ def test_quantity_shortcut():
       }
       )
 
-  t = render_tree(d,filters={'q':filter_quant})
+  t = render_tree(d)
 
-  assert type(t['max']) == Q_
-  # assert t['grid/x/N'] == 10/0.0001
+  assert type(t['max']) == str
+  assert t['max'] == "Q_('10 cm')"
+  assert t['grid/x/N'] == Approx(10/0.0001)
 
 
