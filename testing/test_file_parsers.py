@@ -88,4 +88,44 @@ def test_keyval_dumper_nested():
   assert text == 'key1 = 1\nkey2 = 2.0\nkey3 = three\nlevel1/key11 = 11\n'
 
 
+def test_keyval_loading_boost_property_tree_style_keys():
+  text = '''
+  key1 = val1
+  # comment
+  key2 = 2.0
+  key3 = 3 # comment
 
+  key4 = 44
+
+  level1.key1 = 11
+  level1.level1.key1 = 111
+  level1.level2.key1 = 121
+  '''
+
+  data = keyval.load( text, delimiter="." )
+
+  assert data['key1'] == 'val1'
+  assert data['key2'] == '2.0'
+  assert data['key3'] == '3'
+  assert data['key4'] == '44'
+  assert data['level1']['key1'] == '11'
+  assert data['level1']['level1']['key1'] == '111'
+  assert data['level1']['level2']['key1'] == '121'
+
+
+def test_keyval_dumper_nested_boost_property_tree_style_keys():
+
+  data = { 'key1' : 1
+         , 'key2' : 2.0
+         , 'key3' : 'three'
+         , 'level1' : { 'key11' : 11 }
+         }
+
+  text = keyval.dump( data, delimiter="." )
+  assert text == 'key1 = 1\nkey2 = 2.0\nkey3 = three\nlevel1.key11 = 11\n'
+
+  pdata = fspathtree()
+  pdata.update(data)
+
+  text = keyval.dump( pdata.tree, delimiter="." )
+  assert text == 'key1 = 1\nkey2 = 2.0\nkey3 = three\nlevel1.key11 = 11\n'

@@ -38,7 +38,7 @@ class keyval:
   '''A simple key=val style parser.'''
 
   @staticmethod
-  def load( text ):
+  def load( text, delimiter=None ):
     data = dict()
     for line in text.split('\n'):
       line = line.strip()
@@ -56,16 +56,21 @@ class keyval:
       key = key.strip()
       val = val.strip()
 
+      if delimiter is not None:
+        key = key.replace(delimiter,"/")
       fspathtree.setitem(data,key,val)
 
     return data
 
   @staticmethod
-  def dump( data ):
+  def dump( data, delimiter=None ):
     tree = fspathtree(data)
     text = ""
     for p in tree.get_all_leaf_node_paths():
-      text += str(p.relative_to('/'))
+      key = str(p.relative_to('/'))
+      if delimiter is not None:
+        key = key.replace("/", delimiter)
+      text += str(key)
       text += " = "
       text += str( tree[p] )
       text += "\n"
