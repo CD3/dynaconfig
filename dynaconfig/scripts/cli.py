@@ -53,6 +53,11 @@ def dynaconfig():
                       default="-",
                       help="Output file",)
 
+  parser.add_argument("--keyval-path-delimiter",
+                      action="store",
+                      default=None,
+                      help="Specify the char to use for delimiting configuration tree levels in the keyval file parser.",)
+
   parser.add_argument("-i", "--ignore-unparsed-expressions",
                       action="store_true",
                       help="Ignore errors related to unparsed expressions in the config file." )
@@ -108,6 +113,8 @@ def dynaconfig():
     loader = ini.load
   elif ifmt == "keyval":
     loader = keyval.load
+    if args.keyval_path_delimiter:
+      loader = lambda f : keyval.load(f,delimiter='.')
   else:
     # default
     loader = yaml.safe_load
@@ -121,7 +128,7 @@ def dynaconfig():
   elif ofmt == "keyval":
     dumper = keyval.dump
   else:
-    # default
+    # defaultt
     dumper = yaml.dump
 
 
