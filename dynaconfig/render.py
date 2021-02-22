@@ -147,7 +147,7 @@ def variable_expansion(text,context,default=None,filters=variable_expansion_filt
         elif hasattr(our_filters,f"filter_{f}"):
           func = getattr(our_filters,f"filter_{f}")
         else:
-          raise UnknownFilter(f"Could not find filter named '{f}'")
+          raise UnknownFilter(f"Could not find filter named '{f}' in '{text[result[1]:result[2]]}' while trying to perform variable expansion in '{text}'")
 
         try:
           value = func(value)
@@ -300,7 +300,7 @@ def expression_substitution(text,context={},*,filters={},allowed_names=allowed_e
         elif hasattr(our_filters,f"filter_{toks[0]}"):
           func = getattr(our_filters,f"filter_{toks[0]}")
         else:
-          raise UnknownFilter(f"Could not find filter named '{func}'")
+          raise UnknownFilter(f"Could not find filter named '{func}' in '{text[result[1]:result[2]]}' while trying to perform expression substitution in '{text}'")
 
         try:
           if args is None:
