@@ -9,7 +9,7 @@ setup(name='dynaconfig',
     license="MIT License",
     platforms=["any"],
     packages=find_packages(),
-    install_requires=['pyyaml','fspathtree>=0.3'],
+    install_requires=['pyyaml','fspathtree>=0.3','pedantic'],
     entry_points='''
       [console_scripts]
       dynaconfig=dynaconfig.scripts.cli:dynaconfig

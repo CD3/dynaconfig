@@ -10,7 +10,7 @@ clean:
 	
 
 run-unit_tests: _devel-install-virtualenv
-	. $</bin/activate && pip install pytest pudb pint
+	. $</bin/activate && pip install pytest pudb pint pydantic
 	. $</bin/activate && cd testing && time python -m pytest -s $(OPTS)
 
 run-cli_tests: _devel-install-virtualenv
