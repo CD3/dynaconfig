@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "dynaconfig"
+version = "0.4"
+description = "Write dynamic configurations files with values that contain python expressions and can reference other configuration parameters."
+authors = ["CD Clark III <clifton.clark@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+pyyaml = "^6.0"
+fspathtree = "^0.7"
+pydantic = "^1.10.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.2.0"
+pytest-pudb = "^0.7.0"
+cram = "^0.7"
+pint = "^0.20.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
